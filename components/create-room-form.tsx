@@ -35,7 +35,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
 import { X } from "lucide-react";
 
-const roomSchema = z
+const getRoomSchema = (isPractice: boolean) => z
   .object({
     title: z.string().trim().min(1, "Room title is required").max(120),
     jobPosting: z
@@ -44,14 +44,14 @@ const roomSchema = z
       .min(1, "Job posting is required")
       .max(3000, "Maximum 3000 characters"),
     interviewType: z.enum(["general", "technical", "custom"], {
-      errorMap: () => ({ message: "Select an interview type" }),
+      error: "Select an interview type",
     }),
     idealLength: z
       .number()
       .min(3, "Minimum length is 3 minutes")
       .max(10, "Maximum length is 10 minutes"),
-    startDate: z.date({ error: "Start date is required" }),
-    endDate: z.date({ error: "End date is required" }),
+    startDate: isPractice ? z.date().optional().nullable() : z.date({ error: "Start date is required" }),
+    endDate: isPractice ? z.date().optional().nullable() : z.date({ error: "End date is required" }),
     aiInstructions: z
       .string()
       .trim()
@@ -66,14 +66,18 @@ const roomSchema = z
     ).max(5, "Maximum 5 custom parameters allowed").optional()
   })
   .refine(
-    (data) => data.endDate >= data.startDate,
+    (data) => {
+      if (isPractice) return true;
+      if (!data.startDate || !data.endDate) return false;
+      return data.endDate >= data.startDate;
+    },
     {
       path: ["endDate"],
       message: "End date must be on or after the start date",
     },
   );
 
-type RoomFormValues = z.infer<typeof roomSchema>;
+type RoomFormValues = z.infer<ReturnType<typeof getRoomSchema>>;
 
 interface CreateRoomFormProps extends React.ComponentPropsWithoutRef<"div"> {
   isPractice?: boolean;
@@ -123,7 +127,7 @@ export function CreateRoomForm({
     setFormSuccess(null);
     setFieldErrors({});
 
-    const validation = roomSchema.safeParse({
+    const validation = getRoomSchema(isPractice || false).safeParse({
       title,
       jobPosting,
       interviewType,
@@ -162,8 +166,8 @@ export function CreateRoomForm({
       room_title: validation.data.title,
       job_posting: validation.data.jobPosting,
       interview_type: validation.data.interviewType,
-      start_date: format(validation.data.startDate, "yyyy-MM-dd"),
-      end_date: format(validation.data.endDate, "yyyy-MM-dd"),
+      start_date: validation.data.startDate ? format(validation.data.startDate, "yyyy-MM-dd") : null,
+      end_date: validation.data.endDate ? format(validation.data.endDate, "yyyy-MM-dd") : null,
       ideal_length: validation.data.idealLength,
       is_practice: isPractice || false,
       room_code: generateRoomCode(),
@@ -312,6 +316,7 @@ export function CreateRoomForm({
                   )}
                 </div>
 
+                {!isPractice && (
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Start date</Label>
@@ -377,6 +382,7 @@ export function CreateRoomForm({
                     )}
                   </div>
                 </div>
+                )}
 
                 {formError && (
                   <p className="text-sm text-red-500">{formError}</p>
@@ -569,6 +575,7 @@ export function CreateRoomForm({
                   )}
                 </div>
 
+                {!isPractice && (
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Start date</Label>
@@ -634,6 +641,7 @@ export function CreateRoomForm({
                     )}
                   </div>
                 </div>
+                )}
 
                 {formError && (
                   <p className="text-sm text-red-500">{formError}</p>
