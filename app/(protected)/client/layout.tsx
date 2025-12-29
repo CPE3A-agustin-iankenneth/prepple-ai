@@ -34,6 +34,10 @@ export default async function ClientLayout({
             room:rooms (
                 id,
                 room_title
+                ,
+                        creator: users (
+                          name
+                        )
             )
         `)
         .eq('user_id', user.id)
@@ -47,7 +51,7 @@ export default async function ClientLayout({
       <SidebarProvider>
         <ClientSidebar user={userData} joinedRooms={joinedRooms as unknown as JoinedRoom[]} />
         <SidebarInset>
-            <SidebarTrigger className="-ml-1 absolute top-4 left-4 p-4" icon={<History />} />
+            <SidebarTrigger className="absolute top-4 left-4 p-4" icon={<History />} />
             <div className="flex flex-1 flex-col gap-4 p-4">
                 {children}
             </div>

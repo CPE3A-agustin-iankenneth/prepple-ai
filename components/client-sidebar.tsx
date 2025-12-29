@@ -30,6 +30,9 @@ export interface JoinedRoom {
   room: {
     id: string;
     room_title: string;
+    creator?: {
+      name: string;
+    }
   } | null;
 }
 
@@ -40,6 +43,7 @@ interface ClientSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function ClientSidebar({ user, joinedRooms, ...props }: ClientSidebarProps) {
   const { open } = useSidebar();
+  console.log("Joined Rooms:", joinedRooms);
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -66,14 +70,19 @@ export function ClientSidebar({ user, joinedRooms, ...props }: ClientSidebarProp
         <SidebarGroup className="-p-2">
           <SidebarGroupLabel>Joined Rooms</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu >
               {joinedRooms?.map((record) => (
                 <SidebarMenuItem key={record.id}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild className="h-full">
                     {/* Assuming we have a route to view the interview details/result */}
                     <Link href={`/client/interview/${record.room?.id}/join`}>
-                      <FileText className="mr-2 h-4 w-4" />
-                      <span>{record.room?.room_title || "Unknown Room"}</span>
+                      <div className="flex gap-2 items-center justify-center">
+                        <FileText className="mr-2 h-4 w-4" />
+                        <div className="flex flex-col">
+                          <p>{record.room?.room_title.slice(0, 22) + (record.room?.room_title.length > 20 ? "..." : "") || "Unknown Room"}</p>
+                          <p className="text-xs text-muted-foreground">{record.room?.creator?.name || "Unknown Creator"}</p>
+                        </div>
+                      </div>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

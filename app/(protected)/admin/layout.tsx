@@ -20,11 +20,11 @@ export default async function ProtectedLayout({
     }
 
     return (
-      <div className="relative min-h-screen">
-      <SidebarProvider>
-        <AppSidebar user={userData} />
-        {children}
-      </SidebarProvider>
+      <div>
+        <SidebarProvider>
+          <AppSidebar user={userData} />
+          {children}
+        </SidebarProvider>
       </div>
 
     )
