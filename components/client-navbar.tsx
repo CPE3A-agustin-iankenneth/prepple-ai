@@ -5,8 +5,8 @@ import { ThemeSwitcher } from "./theme-switcher"
 
 export default function ClientNavbar({ name }: { name: string | any }) {
     return (
-        <nav className="shadow-md border-b ">
-            <div className="flex items-center justify-between px-32 py-4">
+        <nav className="shadow-md border rounded-full w-5xl">
+            <div className="flex items-center justify-between px-16 py-4">
                 <div className="flex items-center gap-4">
                     <div className="bg-foreground p-2 rounded-sm">
                         <Image src={LogoIcon} width={16} height={16} alt="Prepple AI Logo" />
