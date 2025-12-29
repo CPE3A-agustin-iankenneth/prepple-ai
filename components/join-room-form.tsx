@@ -105,7 +105,7 @@ export function JoinRoomForm({
     <div className={className} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Join an Interview Room</CardTitle>
+          <CardTitle>Join the Interview Room</CardTitle>
           <CardDescription>
             Upload your resume to proceed.
           </CardDescription>

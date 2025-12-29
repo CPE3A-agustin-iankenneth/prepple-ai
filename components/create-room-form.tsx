@@ -75,10 +75,16 @@ const roomSchema = z
 
 type RoomFormValues = z.infer<typeof roomSchema>;
 
+interface CreateRoomFormProps extends React.ComponentPropsWithoutRef<"div"> {
+  isPractice?: boolean;
+}
+
+
 export function CreateRoomForm({
   className,
+  isPractice,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: CreateRoomFormProps) {
   const [title, setTitle] = useState("");
   const [jobPosting, setJobPosting] = useState("");
   const [interviewType, setInterviewType] =
@@ -151,7 +157,7 @@ export function CreateRoomForm({
       return;
     }
 
-    const { error } = await supabase.from("rooms").insert({
+    const { data: newRoom, error } = await supabase.from("rooms").insert({
       hr_id: user.id,
       room_title: validation.data.title,
       job_posting: validation.data.jobPosting,
@@ -159,6 +165,7 @@ export function CreateRoomForm({
       start_date: format(validation.data.startDate, "yyyy-MM-dd"),
       end_date: format(validation.data.endDate, "yyyy-MM-dd"),
       ideal_length: validation.data.idealLength,
+      is_practice: isPractice || false,
       room_code: generateRoomCode(),
       ai_instruction:
         validation.data.aiInstructions?.trim()
@@ -167,17 +174,31 @@ export function CreateRoomForm({
       custom_parameters: validation.data.customParameters && validation.data.customParameters.length > 0
         ? validation.data.customParameters
         : null,
-    });
+    }).select('id, room_code').single()
 
     if (error) {
-      setFormError(error.message);
-    } else {
-      setFormSuccess("Room created successfully.");
-      resetForm();
+      setFormError(error.message)
+      setIsSubmitting(false)
+      return
     }
 
+    if (!newRoom) {
+      setFormError("Failed to retrieve new room details.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    setFormSuccess("Room created successfully.");
+    resetForm();
     setIsSubmitting(false);
-    router.push("/admin/rooms");
+
+    if (!isPractice) {
+      router.push(`/admin/rooms/${newRoom.id}`)
+    } else {
+      router.push(`/client/interview/${newRoom.id}/join`)
+    }
+
+
   };
 
   return (

@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Promise<{ roomId: strin
   }
 
   return (
-    <div className="w-full flex flex-col h-screen">
+    <div className="w-full flex flex-col h-screen items-center py-8">
       <ClientNavbar name={userProfile?.name || ''} />
       <div className="flex flex-col flex-1 gap-8 justify-center items-center px-32 py-8">
         <div className="text-center">
