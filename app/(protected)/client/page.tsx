@@ -2,6 +2,14 @@ import { createClient } from "@/lib/supabase/server"
 import { JoinRoomCode } from "@/components/join-room-code";
 import Link from "next/link";
 import ClientNavbar from "@/components/client-navbar";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default async function Home() {
     const supabase = createClient();
@@ -31,12 +39,29 @@ export default async function Home() {
   return (
     <div className="w-full flex flex-col h-screen">
       <ClientNavbar name={userProfile?.name || ''} />
-      <div className="flex flex-col flex-1 gap-8 justify-center items-center px-32 py-8">
+      <div className="flex flex-col flex-1 gap-16 justify-center items-center px-32 py-8">
         <div className="text-center">
-          <h1 className="text-4xl font-semibold mb-4">Prepple AI</h1>
-          <p className="w-lg">The AI Interview platform that strengthens the bridge between you and your future employers.</p>
+          <h1 className="w-xl text-4xl/12">The AI Interview platform that strengthens the bridge between you and your future employers.</h1>
         </div>
-        <JoinRoomCode />
+        <div className="flex gap-12 items-center justify-center">
+          <JoinRoomCode />
+          <div className="border border-accent h-full"></div>
+          <div className="max-w-sm flex flex-col gap-4">
+            <Card>
+              <CardHeader>
+              <CardTitle>Create a Practice Session</CardTitle>
+              <CardDescription>
+                Use PreppleAI to practice your interview skills with AI-powered mock interviews.
+              </CardDescription>
+              </CardHeader>
+              <CardContent>
+              <Button asChild className="w-full">
+                <Link href="/client/practice">Start Practicing</Link>
+              </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -64,8 +64,7 @@ export function JoinRoomCode({
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <Label htmlFor="room-code">Room Code</Label>
+            <div className="flex gap-2">
               <Input
                 id="room-code"
                 placeholder="ABC123DE"
@@ -73,11 +72,11 @@ export function JoinRoomCode({
                 onChange={(e) => setRoomCode(e.target.value)}
                 required
               />
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Joining..." : "Join Room"}
+              </Button>
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Joining..." : "Join Room"}
-            </Button>
           </form>
         </CardContent>
       </Card>
