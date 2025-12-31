@@ -19,9 +19,10 @@ interface AppProps {
   appConfig: AppConfig;
   roomId?: string;
   candidateId?: string;
+  isPracticeMode?: boolean;
 }
 
-export function App({ appConfig, roomId, candidateId }: AppProps) {
+export function App({ appConfig, roomId, candidateId, isPracticeMode }: AppProps) {
   const router = useRouter()
   const room = useMemo(() => new Room(), []);
   const [sessionStarted, setSessionStarted] = useState(false);
@@ -31,13 +32,19 @@ export function App({ appConfig, roomId, candidateId }: AppProps) {
   useEffect(() => {
     const onDisconnected = () => {
       setSessionStarted(false);
-      toastAlert({
-        title: "Thank you for using PreppleAI!",
-        description: "Your interview will be reviewed shortly.",
-      })
-      setTimeout(() => {
-        router.push('/client')
-      }, 3500);
+
+      if (!isPracticeMode) {
+        toastAlert({
+          title: "Thank you for using PreppleAI!",
+          description: "Your interview will be reviewed shortly.",
+        })
+        setTimeout(() => {
+          router.push('/client')
+        }, 3500);
+      }
+      else {
+        router.push(`/client/practice/results/${candidateId}`)
+      }
     };
     const onMediaDevicesError = (error: Error) => {
       toastAlert({
