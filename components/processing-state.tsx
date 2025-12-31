@@ -14,12 +14,27 @@ export default function ProcessingState({ candidateId }: { candidateId: string }
             .channel("ai-report-channel")
             .on(
                 "postgres_changes",
-                { event: "INSERT", schema: "public", table: "ai_reports", filter: `candidate_id=eq.${candidateId}` },
+                { event: "*", schema: "public", table: "ai_reports", filter: `candidate_id=eq.${candidateId}` },
                 (payload) => {
-                    router.refresh()
+                    setTimeout(() => {
+                      router.refresh()
+                    }, 1000)
                 }
             )
             .subscribe()
+        
+        const interval = setInterval(async () => {
+            const { data } = await supabase
+                .from("ai_reports")
+                .select("id")
+                .eq("candidate_id", candidateId)
+                .maybeSingle()
+
+            // If we find the report, refresh the page to show results
+            if (data) {
+                router.refresh()
+            }
+        }, 4000)
 
         return () => {
             supabase.removeChannel(channel)

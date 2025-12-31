@@ -213,7 +213,7 @@ export function CreateRoomForm({
       </TabsList>
       <TabsContent value="interview">
         <div className={`${className} lg:w-xl lg:p-0 w-full mx-auto`} {...props}>
-          <Card>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Create interview room</CardTitle>
               <CardDescription>

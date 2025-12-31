@@ -31,7 +31,7 @@ export function App({ appConfig, roomId, candidateId, isPracticeMode }: AppProps
 
   useEffect(() => {
     const onDisconnected = () => {
-      setSessionStarted(false);
+      // setSessionStarted(false);
 
       if (!isPracticeMode) {
         toastAlert({
