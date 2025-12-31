@@ -27,14 +27,14 @@ export default async function Page({ params }: { params: Promise<{ roomId: strin
   }
 
   return (
-    <div className="w-full flex flex-col h-screen items-center py-8">
+    <div className="w-full flex flex-col h-screen items-center lg:py-8">
       <ClientNavbar name={userProfile?.name || ''} />
-      <div className="flex flex-col flex-1 gap-8 justify-center items-center px-32 py-8">
+      <div className="flex flex-col flex-1 gap-8 justify-center items-center lg:px-32 lg:py-8 px-8">
         <div className="text-center">
-            <h1 className="text-4xl font-semibold mb-4">Interview Room: {room.room_title}</h1>
+            <h1 className="lg:text-4xl text-2xl font-semibold mb-4">Interview Room: {room.room_title}</h1>
             <p className="text-center">Prepare yourself and give your best performance!</p>
         </div>
-        <JoinRoomForm className="w-md" roomId={room.id} />
+        <JoinRoomForm className="lg:w-md w-full" roomId={room.id} />
       </div>
     </div>
   );

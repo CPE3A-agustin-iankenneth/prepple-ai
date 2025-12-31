@@ -6,7 +6,7 @@ import Link from "next/link"
 export default async function CreatePracticeRoom() {
 
     return (
-        <div className="w-full flex flex-col h-full items-center px-32 py-8 overflow-hidden">
+        <div className="w-full flex flex-col h-full items-center py-4 px-4 lg:px-32 lg:py-8">
             <div className="w-full">
                 <Button variant="ghost" size="sm" asChild>
                     <Link href="/client">
