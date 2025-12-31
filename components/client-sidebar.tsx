@@ -75,7 +75,7 @@ export function ClientSidebar({ user, joinedRooms, ...props }: ClientSidebarProp
                 <SidebarMenuItem key={record.id}>
                   <SidebarMenuButton asChild className="h-full">
                     {/* Assuming we have a route to view the interview details/result */}
-                    <Link href={`/client/interview/${record.room?.id}/join`}>
+                    <Link href={`/client/practice/results/${record.id}`}>
                       <div className="flex gap-2 items-center justify-center">
                         <FileText className="mr-2 h-4 w-4" />
                         <div className="flex flex-col">

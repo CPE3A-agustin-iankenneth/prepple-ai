@@ -8,6 +8,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface Report {
     tone_analysis: Record<string, number> | string;
@@ -62,6 +63,14 @@ export default function PracticeResultView({ report, room }: { report: Report, r
 
     return (
         <div className="flex flex-col gap-4 w-full max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
+             <div className="flex mt-2">
+                 <Button asChild variant="ghost">
+                     <Link href="/client">
+                         <ArrowLeft className="mr-2 h-4 w-4" />
+                         Back to Home
+                     </Link>
+                 </Button>
+             </div>
              <div className="flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-center mb-6">
                 <div className="flex flex-col gap-2">
                     <h1 className="text-3xl font-bold">{room.room_title}</h1>
@@ -175,11 +184,7 @@ export default function PracticeResultView({ report, room }: { report: Report, r
                 )}
             </div>
             
-            <div className="flex justify-center mt-8">
-                <Button asChild variant="outline">
-                    <Link href="/client/practice">Back to Practice Rooms</Link>
-                </Button>
-            </div>
+
         </div>
     );
 }
