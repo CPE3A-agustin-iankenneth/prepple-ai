@@ -43,7 +43,6 @@ interface ClientSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function ClientSidebar({ user, joinedRooms, ...props }: ClientSidebarProps) {
   const { open } = useSidebar();
-  console.log("Joined Rooms:", joinedRooms);
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
