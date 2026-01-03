@@ -79,7 +79,7 @@ export const content = {
         cards: [
           { title: "Real-Time Feedback", desc: "Get instant scoring on your clarity, technical accuracy, and confidence.", icon: Icon(Activity) },
           { title: "Tailored Questions", desc: "We parse your specific Resume and the Job Description to ask exact questions.", icon: Icon(FileText) },
-          { title: "Human-Like Interaction", desc: "Powered by Gemini 2.0 Flash, the conversation flows naturally with low latency.", icon: Icon(MessageCircle) },
+          { title: "Human-Like Interaction", desc: "Powered by Gemini's Live API, the conversation flows naturally with low latency.", icon: Icon(MessageCircle) },
           { title: "Unlimited Reps", desc: "Nervous about the 'Tell me about yourself' question? Practice it 50 times.", icon: Icon(Repeat) }
         ]
       },
@@ -98,7 +98,7 @@ export const content = {
     },
     cta: {
       heading: "Ready to crush your interview?",
-      subheading: "No credit card required. No account needed to try. Just pure practice.",
+      subheading: "No credit card required. Create an account and start practicing today.",
       button: "Start Practicing Now"
     }
   }
