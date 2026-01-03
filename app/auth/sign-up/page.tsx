@@ -1,11 +1,14 @@
 import { SignUpForm } from "@/components/sign-up-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function Page() {
+export default async function Page({searchParams}: {searchParams?: Promise<{ [key: string]: string | string[] | undefined }>}) {
+  const { type } = await searchParams;
+  const defaultTab = type === "asClient" ? "asClient" : "asAdmin";
+
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <Tabs defaultValue="asAdmin" className="space-y-4">
+        <Tabs defaultValue={defaultTab} className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="asAdmin">Sign up as Admin</TabsTrigger>
             <TabsTrigger value="asClient">Sign up as Client</TabsTrigger>

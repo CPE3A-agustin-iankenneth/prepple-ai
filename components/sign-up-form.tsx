@@ -118,7 +118,7 @@ export function SignUpForm({
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
+          <CardDescription>{signUpType === "asAdmin" ? "Admin accounts are for recruiters and HR professionals who manage job postings and candidate evaluations." : "Client accounts are for job seekers who were either instructed to use PreppleAI by their recruiters for job applications, or for practicing their interview skills."}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp}>

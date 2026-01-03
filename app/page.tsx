@@ -122,12 +122,13 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, CheckCircle2, Play, Users, Briefcase } from 'lucide-react';
+import { ArrowRight, Play, Users, Briefcase } from 'lucide-react';
 import { content, Mode } from './constants';
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -211,12 +212,14 @@ const Hero = ({ mode }: { mode: Mode }) => {
             {data.subheading}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className={cn(
-              "px-8 py-4 rounded-lg font-semibold text-white transition-all transform hover:scale-105 flex items-center gap-2",
-              mode === 'recruiter' ? "bg-blue-600 hover:bg-blue-500 shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)]" : "bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_30px_-5px_rgba(5,150,105,0.4)]"
-            )}>
-              {data.ctaPrimary} <ArrowRight size={18} />
-            </button>
+            <Link href={`/auth/sign-up?type=${mode === 'recruiter' ? 'asAdmin' : 'asClient'}`}>
+              <button className={cn(
+                "px-8 py-4 rounded-lg font-semibold text-white transition-all transform hover:scale-105 flex items-center gap-2",
+                mode === 'recruiter' ? "bg-blue-600 hover:bg-blue-500 shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)]" : "bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_30px_-5px_rgba(5,150,105,0.4)]"
+              )}>
+                {data.ctaPrimary} <ArrowRight size={18} />
+              </button>
+            </Link>
             <button className="px-8 py-4 rounded-lg font-semibold text-slate-300 border border-slate-700 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2">
               <Play size={18} /> {data.ctaSecondary}
             </button>
@@ -360,14 +363,16 @@ const FooterCTA = ({ mode }: { mode: Mode }) => {
       <div className="relative z-10 max-w-3xl mx-auto">
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">{data.heading}</h2>
         <p className="text-xl text-slate-400 mb-10">{data.subheading}</p>
-        <button className={cn(
-          "px-10 py-5 rounded-full font-bold text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1",
-          mode === 'recruiter' 
-            ? "bg-white text-blue-900 hover:bg-blue-50" 
-            : "bg-white text-emerald-900 hover:bg-emerald-50"
-        )}>
-          {data.button}
-        </button>
+        <Link href={`/auth/sign-up?type=${mode === 'recruiter' ? 'asAdmin' : 'asClient'}`}>
+          <button className={cn(
+            "px-10 py-5 rounded-full font-bold text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1",
+            mode === 'recruiter' 
+              ? "bg-white text-blue-900 hover:bg-blue-50" 
+              : "bg-white text-emerald-900 hover:bg-emerald-50"
+          )}>
+            {data.button}
+          </button>
+        </Link>
       </div>
     </section>
   );
@@ -399,7 +404,7 @@ export default function LandingPage() {
             <Image src={LogoIcon} alt="Prepple AI Logo" className="inline-block w-6 h-6 mr-2" />
             <div className="text-xl font-bold text-white">Prepple<span className="text-slate-500">AI</span></div>
           </div>
-           <Button variant={"outline"}>Login</Button>
+           <Button asChild variant={"outline"}><Link href="/auth/login">Login</Link></Button>
         </nav>
 
         <div className="pt-8">
