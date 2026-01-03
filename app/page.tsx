@@ -119,11 +119,11 @@
 // }
 
 
-// app/page.tsx
 "use client";
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -131,15 +131,17 @@ import { ArrowRight, CheckCircle2, Play, Users, Briefcase } from 'lucide-react';
 import { content, Mode } from './constants';
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Button } from '@/components/ui/button';
+import LandingHeroRecuiter  from '@/public/images/landing-hero-recruiter.png'
+import LandingHeroSeeker from '@/public/images/landing-hero-seeker.png'
+import LogoIcon from "@/public/logo-icon.svg"
 
-// --- Utilities ---
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// --- Components ---
 
 // 1. The Toggle Switch
 const ModeToggle = ({ mode, setMode }: { mode: Mode; setMode: (m: Mode) => void }) => {
@@ -187,7 +189,7 @@ const Hero = ({ mode }: { mode: Mode }) => {
   const data = content[mode].hero;
   
   return (
-    <div className="relative z-10 max-w-4xl mx-auto text-center pt-12 pb-24 px-6">
+    <div className="relative z-10 max-w-4xl mx-auto text-center pt-12 px-6">
       <AnimatePresence mode="wait">
         <motion.div
           key={mode}
@@ -218,6 +220,9 @@ const Hero = ({ mode }: { mode: Mode }) => {
             <button className="px-8 py-4 rounded-lg font-semibold text-slate-300 border border-slate-700 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2">
               <Play size={18} /> {data.ctaSecondary}
             </button>
+          </div>
+          <div className='mt-16'>
+            <Image src={mode === 'recruiter' ? LandingHeroRecuiter : LandingHeroSeeker} alt="Hero Image" className='lg:rounded-t-2xl rounded-t-lg' />
           </div>
         </motion.div>
       </AnimatePresence>
@@ -251,7 +256,7 @@ const FeatureGrid = ({ mode }: { mode: Mode }) => {
                 "w-10 h-10 rounded-lg mb-4 flex items-center justify-center",
                 mode === 'recruiter' ? "bg-blue-900/20 text-blue-400" : "bg-emerald-900/20 text-emerald-400"
               )}>
-                <CheckCircle2 size={20} />
+                {card.icon}
               </div>
               <h3 className="text-white font-semibold mb-2 group-hover:text-blue-200 transition-colors">{card.title}</h3>
               <p className="text-slate-400 text-sm leading-relaxed">{card.desc}</p>
@@ -307,12 +312,7 @@ const HowItWorks = ({ mode }: { mode: Mode }) => {
             <div key={i} className="step-card flex flex-col md:flex-row items-center gap-12 group">
               <div className={cn("flex-1", i % 2 === 1 ? "md:order-2" : "")}>
                  {/* Placeholder for the Image/UI representation */}
-                 <div className="aspect-video rounded-xl bg-slate-900 border border-slate-800 relative overflow-hidden shadow-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-slate-800/50 to-transparent" />
-                    <div className="absolute inset-0 flex items-center justify-center text-slate-600 font-mono text-xs uppercase tracking-widest">
-                       UI Mockup: {step.title}
-                    </div>
-                 </div>
+                 <Image src={step.img} alt={step.title} className={cn("rounded-2xl shadow-lg w-full h-[200px] md:h-[350px] object-cover", mode === 'recruiter' ? "object-top-left": "object-top")} />
               </div>
               <div className={cn("flex-1 space-y-4", i % 2 === 1 ? "md:order-1" : "")}>
                 <div className={cn(
@@ -395,8 +395,11 @@ export default function LandingPage() {
 
       <div className="relative z-10">
         <nav className="p-6 flex justify-between items-center max-w-7xl mx-auto">
-           <div className="text-xl font-bold text-white tracking-tighter">Prepple<span className="text-slate-500">.ai</span></div>
-           <div className="text-sm font-medium text-slate-400">Login</div>
+          <div className='flex gap-2 items-center'>
+            <Image src={LogoIcon} alt="Prepple AI Logo" className="inline-block w-6 h-6 mr-2" />
+            <div className="text-xl font-bold text-white">Prepple<span className="text-slate-500">AI</span></div>
+          </div>
+           <Button variant={"outline"}>Login</Button>
         </nav>
 
         <div className="pt-8">
