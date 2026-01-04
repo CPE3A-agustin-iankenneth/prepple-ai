@@ -127,7 +127,7 @@ export default async function generateReport(roomId: string, candidateId: string
       - Professional demeanor and enthusiasm
       - Time management (interview duration vs. ideal length)
       - Alignment between resume experience and interview responses
-      - Interview Completeness: Check if the conversation ends abruptly or if the candidate left early. If so, apply a significant deduction to the interview score and explicitly mention the early exit in the performance summary.
+      - Interview Completeness: Check if the conversation ends abruptly or if the candidate left early. If so, apply a significant deduction to the interview score and tone analysis and explicitly mention the early exit in the performance summary.
 
       Respond ONLY with valid JSON.
       `

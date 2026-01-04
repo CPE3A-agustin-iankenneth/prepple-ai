@@ -24,7 +24,7 @@ export async function POST(req: Request) {
         }
         const body = await req.json()
         const { roomId, candidateId, sessionHistory, parsedResume, usageMetrics } = body
-        console.log(roomId, candidateId, sessionHistory, parsedResume, usageMetrics)
+        
 
         if (!roomId || !candidateId || !sessionHistory || !parsedResume || !usageMetrics) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
