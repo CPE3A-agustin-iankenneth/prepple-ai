@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 import { GoogleGenAI } from '@google/genai'
 
 const ai = new GoogleGenAI({
@@ -21,14 +21,16 @@ export interface InterviewReport {
 }
 
 export default async function generateReport(roomId: string, candidateId: string, parsedResume: string, sessionHistory: any[], usageMetrics: any): Promise<InterviewReport> {
-    const supabase = await createClient();
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
     const { data: roomData, error: roomError } = await supabase
       .from('rooms')
       .select('id, room_title, interview_type, job_posting, ideal_length, custom_parameters')
       .eq('id', roomId)
       .single();
-    if (roomError) throw new Error('Error fetching room data');
+    if (roomError) {
+      throw new Error(`Error fetching room data. Details: ${roomError.message}`);
+    };
 
     const { data: candidateData, error: candidateError } = await supabase
       .from('candidates')

@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({
   children,
@@ -12,11 +13,15 @@ export default async function ProtectedLayout({
 
     const { data: userData, error: userError } = await supabase
       .from("users")
-      .select("name, email")
+      .select("name, email, is_hr")
       .eq("id", user?.id)
       .single();
     if (userError) {
       console.error("Error fetching user data:", userError.message);
+    }
+
+    if (!userData.is_hr) {
+      redirect("/client");
     }
 
     return (

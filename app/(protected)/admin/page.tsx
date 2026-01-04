@@ -48,15 +48,15 @@ export default async function Home() {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, count]) => ({ date, count }));
 
-  // Check if user is not HR and redirect if necessary
-  if (!userProfile?.is_hr) {
-    return (
-      <div>
-        <h1>You are currently logged in as a Client</h1>
-        <Link href="/client">Go to Client Page</Link>
-      </div>
-    );
-  }
+  // // Check if user is not HR and redirect if necessary
+  // if (!userProfile?.is_hr) {
+  //   return (
+  //     <div>
+  //       <h1>You are currently logged in as a Client</h1>
+  //       <Link href="/client">Go to Client Page</Link>
+  //     </div>
+  //   );
+  // }
 
   const breadcrumbItems = [
     { label: "Home", href: "/admin" },

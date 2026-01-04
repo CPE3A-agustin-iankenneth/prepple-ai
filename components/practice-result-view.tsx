@@ -22,6 +22,7 @@ interface Report {
 }
 
 interface Room {
+    id: string;
     room_title: string;
     job_posting: string;
     ai_instruction: string;
@@ -75,6 +76,9 @@ export default function PracticeResultView({ report, room }: { report: Report, r
                 <div className="flex flex-col gap-2">
                     <h1 className="text-3xl font-bold">{room.room_title}</h1>
                     <p className="text-muted-foreground">Practice Session Result</p>
+                    <Button asChild >
+                        <Link href={`/client/interview/${room.id}/join`}>Retake</Link>
+                    </Button>
                 </div>
                 
                 <Card className="w-full sm:w-auto">

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 import generateReport from '@/lib/generateReport'
 
 const AGENT_API_KEY = process.env.AGENT_API_KEY
 
 export async function POST(req: Request) {
-    const supabase = await createClient();
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
     try {
         const apiKey = req.headers.get("x-api-key");
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
         }
         const body = await req.json()
         const { roomId, candidateId, sessionHistory, parsedResume, usageMetrics } = body
+        console.log(roomId, candidateId, sessionHistory, parsedResume, usageMetrics)
 
         if (!roomId || !candidateId || !sessionHistory || !parsedResume || !usageMetrics) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })

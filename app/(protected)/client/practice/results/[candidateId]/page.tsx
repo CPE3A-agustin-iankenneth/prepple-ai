@@ -41,7 +41,7 @@ export default async function ResultsPage({ params }: { params: { candidateId: s
 
     const { data: roomData, error: roomDataError } = await supabase
         .from("rooms")
-        .select("room_title, job_posting, ai_instruction, custom_parameters, created_at, is_practice, hr_id")
+        .select("id, room_title, job_posting, ai_instruction, custom_parameters, created_at, is_practice, hr_id")
         .eq("id", candidate?.applied_room)
         .single()
 
