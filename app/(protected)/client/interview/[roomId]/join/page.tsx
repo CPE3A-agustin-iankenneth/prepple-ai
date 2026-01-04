@@ -24,7 +24,7 @@ export default async function Page({ params }: { params: Promise<{ roomId: strin
     .eq('user_id', user?.id)
     .gte('created_at', today.toISOString())
 
-  const DAILY_LIMIT = 10
+  const DAILY_LIMIT = 3
   const usageCount = count || 0
   const hasReachedLimit = usageCount >= DAILY_LIMIT
 
