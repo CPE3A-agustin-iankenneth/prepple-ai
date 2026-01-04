@@ -1,3 +1,5 @@
+![Project Screenshot](public/images/readme-img-1.png)
+
 # Prepple AI
 
 Prepple AI is a web application designed to simplify and automate the HR interview process. It acts as an additional layer in the hiring process by using AI to conduct initial screening interviews.
