@@ -2,6 +2,7 @@ import { headers } from 'next/headers';
 import { getAppConfig } from '@/lib/livekit/utils';
 import LogoIcon from '@/public/logo-icon.svg';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -14,12 +15,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="h-screen w-full bg-background text-foreground">
       <header className="fixed top-0 left-0 z-50 hidden w-full flex-row justify-between p-6 md:flex">
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://livekit.io"
-          className="scale-100 transition-transform duration-300 hover:scale-110"
-        >
+        <Link href={"/client"}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <Image src={LogoIcon} alt={`${companyName} Logo`} className="block size-6 dark:hidden" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -28,7 +24,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
             alt={`${companyName} Logo`}
             className="hidden size-6 dark:block"
           />
-        </a>
+        </Link>
         <span className="text-foreground font-mono text-xs font-bold tracking-wider uppercase">
           Built with{' '}
           <a
