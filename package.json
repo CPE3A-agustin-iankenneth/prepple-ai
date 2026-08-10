@@ -7,9 +7,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@google/genai": "^1.27.0",
+    "@google/genai": "^2.16.0",
     "@gsap/react": "^2.1.2",
-    "@livekit/components-react": "^2.9.15",
+    "@livekit/components-react": "^2.9.23",
     "@livekit/components-styles": "^1.1.6",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -37,8 +37,8 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.26",
     "gsap": "^3.14.2",
-    "livekit-client": "^2.15.11",
-    "livekit-server-sdk": "^2.14.0",
+    "livekit-client": "^2.21.0",
+    "livekit-server-sdk": "^2.17.0",
     "lucide-react": "^0.511.0",
     "mammoth": "^1.11.0",
     "mime": "^4.1.0",

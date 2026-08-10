@@ -7,14 +7,21 @@ import Image from 'next/image';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, Play, Users, Briefcase } from 'lucide-react';
+import {
+  ArrowRight,
+  Play,
+  Users,
+  Briefcase,
+} from '@phosphor-icons/react';
 import { content, Mode } from '@/app/constants';
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Button } from '@/components/ui/button';
-import LandingHeroRecuiter from '@/public/images/landing-hero-recruiter.png'
-import LandingHeroSeeker from '@/public/images/landing-hero-seeker.png'
-import LogoIcon from "@/public/logo-icon.svg"
+import LogoIcon from "@/public/logo-icon.svg";
+import { HeroParallax } from '@/components/landing/hero-parallax';
+import { MockFrame } from '@/components/landing/mock-frame';
+import { TiltMockFrame } from '@/components/landing/tilt-mock-frame';
+import { HeroMock, LandingMock } from '@/components/landing/mocks';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -22,127 +29,185 @@ function cn(...inputs: ClassValue[]) {
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
+const signUpHref = (mode: Mode) =>
+  `/auth/sign-up?type=${mode === 'recruiter' ? 'asAdmin' : 'asClient'}`;
 
-// 1. The Toggle Switch
-const ModeToggle = ({ mode, setMode }: { mode: Mode; setMode: (m: Mode) => void }) => {
+const spring = { type: "spring" as const, stiffness: 260, damping: 28 };
+
+const ModeToggle = ({ mode, setMode }: { mode: Mode; setMode: (m: Mode) => void }) => (
+  <div
+    className="flex w-fit items-center gap-0.5 rounded-full border border-white/10 bg-white/[0.04] p-0.5 backdrop-blur-sm sm:gap-1 sm:p-1"
+    role="tablist"
+    aria-label="Audience"
+  >
+    {(['recruiter', 'seeker'] as const).map((tab) => {
+      const isActive = mode === tab;
+      const Icon = tab === 'recruiter' ? Briefcase : Users;
+      const label =
+        tab === 'recruiter'
+          ? { short: 'Recruiters', full: 'For recruiters' }
+          : { short: 'Seekers', full: 'For job seekers' };
+
+      return (
+        <button
+          key={tab}
+          role="tab"
+          aria-selected={isActive}
+          onClick={() => setMode(tab)}
+          className={cn(
+            "relative rounded-full px-2.5 py-1.5 text-xs font-medium transition-colors duration-200 sm:px-4 sm:py-2 sm:text-sm",
+            isActive ? "text-white" : "text-slate-400 hover:text-slate-200"
+          )}
+        >
+          {isActive && (
+            <motion.div
+              layoutId="activePill"
+              className="absolute inset-0 rounded-full bg-primary/90 shadow-[0_0_20px_-4px_hsl(var(--primary)/0.5)]"
+              transition={spring}
+            />
+          )}
+          <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
+            <Icon size={15} weight="light" aria-hidden />
+            <span className="sm:hidden">{label.short}</span>
+            <span className="hidden sm:inline">{label.full}</span>
+          </span>
+        </button>
+      );
+    })}
+  </div>
+);
+
+const PrimaryCTA = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <Link
+    href={href}
+    className="group inline-flex h-12 items-center gap-3 rounded-full bg-primary pl-6 pr-1.5 text-base font-medium text-primary-foreground transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary/90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c0e14]"
+  >
+    {children}
+    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-px">
+      <ArrowRight size={16} weight="bold" aria-hidden />
+    </span>
+  </Link>
+);
+
+const HeroSection = ({ mode }: { mode: Mode }) => {
+  const data = content[mode].hero;
+  const trustData = content[mode].trustBar;
+
   return (
-    <div className="relative flex items-center bg-slate-900/50 border border-slate-800 rounded-full p-1 w-fit mx-auto mb-8 backdrop-blur-sm">
-      <button
-        onClick={() => setMode('recruiter')}
-        className={cn(
-          "relative px-6 py-2 rounded-full text-sm font-medium transition-colors z-10",
-          mode === 'recruiter' ? "text-white" : "text-slate-400 hover:text-slate-200"
-        )}
-      >
-        {mode === 'recruiter' && (
+    <HeroParallax>
+      <div className="flex flex-1 flex-col items-center justify-center px-6 pt-20 text-center md:pt-24">
+        <AnimatePresence mode="wait">
           <motion.div
-            layoutId="activePill"
-            className="absolute inset-0 bg-blue-600 rounded-full"
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        )}
-        <span className="relative z-10 flex items-center gap-2"><Briefcase size={14} /> Recruiter Mode</span>
-      </button>
+            key={mode}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto max-w-3xl"
+          >
+            <h1 className="font-serif text-balance mb-5 text-[2.25rem] font-medium leading-[1.08] tracking-[-0.03em] text-white md:text-5xl lg:text-[3.25rem]">
+              {data.heading}
+            </h1>
+            <p className="text-pretty mx-auto mb-8 max-w-[38ch] text-base leading-[1.7] text-slate-300 md:text-lg">
+              {data.subheading}
+            </p>
 
-      <button
-        onClick={() => setMode('seeker')}
-        className={cn(
-          "relative px-6 py-2 rounded-full text-sm font-medium transition-colors z-10",
-          mode === 'seeker' ? "text-white" : "text-slate-400 hover:text-slate-200"
-        )}
-      >
-        {mode === 'seeker' && (
+            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <PrimaryCTA href={signUpHref(mode)}>{data.ctaPrimary}</PrimaryCTA>
+              <Button
+                id="landing-live-demo"
+                type="button"
+                variant="outline"
+                size="lg"
+                className="h-12 rounded-full border-white/12 bg-white/[0.03] px-6 text-base text-slate-200 transition-all duration-200 hover:border-white/20 hover:bg-white/[0.06] hover:text-white active:scale-[0.98]"
+              >
+                <Play size={18} weight="fill" aria-hidden />
+                {data.ctaSecondary}
+              </Button>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="relative z-10 px-6 pb-4">
+        <AnimatePresence mode="wait">
           <motion.div
-            layoutId="activePill"
-            className="absolute inset-0 bg-emerald-600 rounded-full"
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        )}
-        <span className="relative z-10 flex items-center gap-2"><Users size={14} /> Job Seeker Mode</span>
-      </button>
-    </div>
+            key={mode}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <MockFrame className="max-w-xl">
+              <HeroMock mode={mode} />
+            </MockFrame>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <TrustBar items={trustData.items} />
+    </HeroParallax>
   );
 };
 
-// 2. Hero Section
-const Hero = ({ mode }: { mode: Mode }) => {
-  const data = content[mode].hero;
+const bentoSpanClass = {
+  lg: 'md:col-span-2 lg:row-span-2',
+  sm: '',
+  md: 'md:col-span-2 lg:col-span-3',
+} as const;
+
+const FeatureGrid = ({ mode }: { mode: Mode }) => {
+  const data = content[mode].features[0];
 
   return (
-    <div className="relative z-10 max-w-4xl mx-auto text-center pt-12 px-6">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={mode}
-          initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
-          transition={{ duration: 0.5 }}
-        >
-          <span className={cn(
-            "inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase mb-6 border",
-            mode === 'recruiter' ? "bg-blue-900/30 border-blue-800 text-blue-300" : "bg-emerald-900/30 border-emerald-800 text-emerald-300"
-          )}>
-            {data.badge}
-          </span>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
+    <section className="relative border-t border-white/[0.06] py-24 md:py-32">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mb-16 max-w-2xl md:mb-20">
+          <h2 className="font-serif text-balance mb-4 text-3xl font-medium tracking-[-0.02em] text-white md:text-4xl">
             {data.heading}
-          </h1>
-          <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+          </h2>
+          <p className="text-pretty text-lg leading-relaxed text-slate-400">
             {data.subheading}
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href={`/auth/sign-up?type=${mode === 'recruiter' ? 'asAdmin' : 'asClient'}`}>
-              <button className={cn(
-                "px-8 py-4 rounded-lg font-semibold text-white transition-all transform hover:scale-105 flex items-center gap-2",
-                mode === 'recruiter' ? "bg-blue-600 hover:bg-blue-500 shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)]" : "bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_30px_-5px_rgba(5,150,105,0.4)]"
-              )}>
-                {data.ctaPrimary} <ArrowRight size={18} />
-              </button>
-            </Link>
-            <button className="px-8 py-4 rounded-lg font-semibold text-slate-300 border border-slate-700 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2">
-              <Play size={18} /> {data.ctaSecondary}
-            </button>
-          </div>
-          <div className='mt-16'>
-            <Image src={mode === 'recruiter' ? LandingHeroRecuiter : LandingHeroSeeker} alt="Hero Image" className='lg:rounded-t-2xl rounded-t-lg' />
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-};
-
-// 3. Feature Grid
-const FeatureGrid = ({ mode }: { mode: Mode }) => {
-  const data = content[mode].features[0]; // First feature block
-
-  return (
-    <section className="py-24 bg-slate-950">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-16 md:text-center max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{data.heading}</h2>
-          <p className="text-slate-400 text-lg">{data.subheading}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {data.cards?.map((card, i) => (
-            <motion.div
-              key={card.title + mode} // Force re-render on mode switch
+            <motion.article
+              key={card.title + mode}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-slate-600 transition-colors group"
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ delay: i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className={cn(
+                'group flex flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-[#0c0e14] transition-all duration-300 hover:border-primary/25',
+                card.span && bentoSpanClass[card.span],
+                card.span === 'lg' && 'md:min-h-[320px] lg:min-h-[380px]'
+              )}
             >
-              <div className={cn(
-                "w-10 h-10 rounded-lg mb-4 flex items-center justify-center",
-                mode === 'recruiter' ? "bg-blue-900/20 text-blue-400" : "bg-emerald-900/20 text-emerald-400"
-              )}>
-                {card.icon}
-              </div>
-              <h3 className="text-white font-semibold mb-2 group-hover:text-blue-200 transition-colors">{card.title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">{card.desc}</p>
-            </motion.div>
+              {'mock' in card && card.mock && card.span === 'lg' ? (
+                <div className="flex flex-1 flex-col">
+                  <div className="overflow-hidden rounded-t-2xl border-b border-white/[0.06]">
+                    <LandingMock mock={card.mock} compact />
+                  </div>
+                  <div className="p-6 md:p-8">
+                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20 transition-colors duration-300 group-hover:bg-primary/15">
+                      {card.icon}
+                    </div>
+                    <h3 className="mb-2 text-lg font-semibold text-white">{card.title}</h3>
+                    <p className="text-sm leading-relaxed text-slate-400">{card.desc}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className={cn('p-6', card.span === 'lg' && 'md:p-8')}>
+                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20 transition-colors duration-300 group-hover:bg-primary/15">
+                    {card.icon}
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-white">{card.title}</h3>
+                  <p className="text-sm leading-relaxed text-slate-400">{card.desc}</p>
+                </div>
+              )}
+            </motion.article>
           ))}
         </div>
       </div>
@@ -150,7 +215,6 @@ const FeatureGrid = ({ mode }: { mode: Mode }) => {
   );
 };
 
-// 4. How It Works (ScrollTrigger)
 const HowItWorks = ({ mode }: { mode: Mode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const data = content[mode].features[1];
@@ -159,50 +223,49 @@ const HowItWorks = ({ mode }: { mode: Mode }) => {
     const steps = gsap.utils.toArray<HTMLElement>('.step-card');
 
     steps.forEach((step) => {
-      gsap.fromTo(step,
-        { opacity: 0.3, scale: 0.95 },
+      gsap.fromTo(
+        step,
+        { opacity: 0.35, y: 28 },
         {
           opacity: 1,
-          scale: 1,
-          duration: 0.5,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
           scrollTrigger: {
             trigger: step,
-            start: "top 80%",
-            end: "top 50%",
-            toggleActions: "play none none reverse",
-          }
+            start: 'top 85%',
+            end: 'top 55%',
+            toggleActions: 'play none none reverse',
+          },
         }
       );
     });
   }, { scope: containerRef, dependencies: [mode] });
 
   return (
-    <section ref={containerRef} className="py-24 bg-black relative overflow-hidden">
-      {/* Background Glow */}
-      <div className={cn(
-        "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[120px] opacity-20 pointer-events-none",
-        mode === 'recruiter' ? "bg-blue-900" : "bg-emerald-900"
-      )} />
-
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <h2 className="text-3xl md:text-5xl font-bold text-center text-white mb-20">
+    <section ref={containerRef} className="relative overflow-hidden py-24 md:py-32">
+      <div className="mx-auto max-w-6xl px-6">
+        <h2 className="font-serif text-balance mb-16 text-center text-3xl font-medium tracking-[-0.02em] text-white md:mb-24 md:text-4xl">
           {data.heading}
         </h2>
 
-        <div className="space-y-24">
+        <div className="space-y-24 md:space-y-32">
           {data.steps?.map((step, i) => (
-            <div key={i} className="step-card flex flex-col md:flex-row items-center gap-12 group">
-              <div className={cn("flex-1", i % 2 === 1 ? "md:order-2" : "")}>
-                {/* Placeholder for the Image/UI representation */}
-                <Image src={step.img} alt={step.title} className={cn("rounded-2xl shadow-lg w-full h-[200px] md:h-[350px] object-cover", mode === 'recruiter' ? "object-top-left" : "object-top")} />
+            <div
+              key={step.title}
+              className="step-card grid items-center gap-10 md:grid-cols-2 md:gap-16"
+            >
+              <div className={cn(i % 2 === 1 && 'md:order-2')}>
+                <TiltMockFrame tiltDirection={i % 2 === 0 ? 'right' : 'left'}>
+                  <LandingMock mock={step.mock} />
+                </TiltMockFrame>
               </div>
-              <div className={cn("flex-1 space-y-4", i % 2 === 1 ? "md:order-1" : "")}>
-                <div className={cn(
-                  "text-6xl font-black opacity-20",
-                  mode === 'recruiter' ? "text-blue-500" : "text-emerald-500"
-                )}>0{i + 1}</div>
-                <h3 className="text-2xl font-bold text-white">{step.title}</h3>
-                <p className="text-slate-400 text-lg">{step.desc}</p>
+              <div className={cn('space-y-4', i % 2 === 1 && 'md:order-1')}>
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold tabular-nums text-primary ring-1 ring-primary/25">
+                  {i + 1}
+                </span>
+                <h3 className="text-2xl font-semibold tracking-tight text-white">{step.title}</h3>
+                <p className="text-pretty max-w-md text-lg leading-relaxed text-slate-400">{step.desc}</p>
               </div>
             </div>
           ))}
@@ -212,92 +275,113 @@ const HowItWorks = ({ mode }: { mode: Mode }) => {
   );
 };
 
-// 5. Trust Bar
-const TrustBar = ({ mode }: { mode: Mode }) => {
-  const data = content[mode].trustBar;
-  return (
-    <div className="py-12 border-y border-slate-900 bg-black/50 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-6 text-center">
-        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest mb-8">
-          {data.header}
-        </p>
-        <div className="flex flex-wrap justify-center gap-4 md:gap-12 opacity-50">
-          {data.items.map((item, i) => (
-            <span key={i} className="text-slate-300 font-semibold text-lg">{item}</span>
-          ))}
-        </div>
+const TrustBar = ({
+  items,
+}: {
+  items: { label: string; icon: React.ReactNode }[];
+}) => (
+  <div className="relative mt-auto border-t border-white/[0.08] bg-[#0c0e14]/40 py-5 backdrop-blur-sm">
+    <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6">
+      <span className="text-sm font-medium text-slate-400">Built for</span>
+      <div className="flex flex-wrap justify-center gap-2">
+        {items.map((item) => (
+          <span
+            key={item.label}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3.5 py-1.5 text-sm font-medium text-slate-200"
+          >
+            <span className="text-primary" aria-hidden>{item.icon}</span>
+            {item.label}
+          </span>
+        ))}
       </div>
     </div>
-  );
-};
+  </div>
+);
 
-// 6. CTA Footer
 const FooterCTA = ({ mode }: { mode: Mode }) => {
   const data = content[mode].cta;
-  return (
-    <section className="py-32 px-6 text-center relative overflow-hidden">
-      {/* Decorative Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
 
-      <div className="relative z-10 max-w-3xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">{data.heading}</h2>
-        <p className="text-xl text-slate-400 mb-10">{data.subheading}</p>
-        <Link href={`/auth/sign-up?type=${mode === 'recruiter' ? 'asAdmin' : 'asClient'}`}>
-          <button className={cn(
-            "px-10 py-5 rounded-full font-bold text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1",
-            mode === 'recruiter'
-              ? "bg-white text-blue-900 hover:bg-blue-50"
-              : "bg-white text-emerald-900 hover:bg-emerald-50"
-          )}>
-            {data.button}
-          </button>
-        </Link>
+  return (
+    <section className="relative overflow-hidden px-6 py-28 md:py-36">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,hsl(var(--primary)/0.08),transparent)]"
+      />
+
+      <div className="relative z-10 mx-auto max-w-2xl text-center">
+        <h2 className="font-serif text-balance mb-5 text-3xl font-medium tracking-[-0.02em] text-white md:text-4xl">
+          {data.heading}
+        </h2>
+        <p className="text-pretty mb-10 text-lg leading-relaxed text-slate-400">{data.subheading}</p>
+        <PrimaryCTA href={signUpHref(mode)}>{data.button}</PrimaryCTA>
       </div>
     </section>
   );
 };
 
-
-// --- Main Landing Page Component ---
 export default function LandingPage() {
   const [mode, setMode] = useState<Mode>('recruiter');
 
   return (
-    <main className="min-h-screen bg-black text-slate-200 selection:bg-blue-500/30">
-
-      {/* Background Ambience */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className={cn(
-          "absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[128px] opacity-20 transition-colors duration-1000",
-          mode === 'recruiter' ? "bg-blue-600" : "bg-emerald-600"
-        )} />
-        <div className={cn(
-          "absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full blur-[128px] opacity-20 transition-colors duration-1000",
-          mode === 'recruiter' ? "bg-indigo-600" : "bg-teal-600"
-        )} />
-      </div>
+    <main id="main-content" className="landing-grain relative min-h-dvh bg-[#0c0e14] text-slate-200 selection:bg-primary/30">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+      >
+        Skip to content
+      </a>
 
       <div className="relative z-10">
-        <nav className="p-6 flex justify-between items-center max-w-7xl mx-auto">
-          <div className='flex gap-2 items-center'>
-            <Image src={LogoIcon} alt="Prepple AI Logo" className="inline-block w-6 h-6 mr-2" />
-            <div className="text-xl font-bold text-white">Prepple<span className="text-slate-500">AI</span></div>
-          </div>
-          <Button asChild variant={"outline"}><Link href="/auth/login">Login</Link></Button>
-        </nav>
+        <header className="fixed top-0 z-30 w-full px-4 pt-5 md:px-6">
+          <nav
+            aria-label="Main"
+            className="relative mx-auto flex max-w-5xl items-center justify-between rounded-full border border-white/10 bg-[#0c0e14]/70 px-4 py-2.5 pl-5 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.4)] backdrop-blur-xl"
+          >
+            <Link href="/" className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-80">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/12 ring-1 ring-primary/20">
+                <Image src={LogoIcon} alt="" aria-hidden className="h-4 w-4" />
+              </div>
+              <span className="hidden text-base font-semibold tracking-tight text-white sm:inline">Prepple</span>
+            </Link>
 
-        <div className="pt-8">
-          <ModeToggle mode={mode} setMode={setMode} />
-          <Hero mode={mode} />
-          <TrustBar mode={mode} />
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <ModeToggle mode={mode} setMode={setMode} />
+            </div>
+
+            <Button
+              asChild
+              variant="outline"
+              className="shrink-0 rounded-full border-white/12 bg-white/[0.04] transition-all duration-200 hover:border-white/20 hover:bg-white/[0.08] active:scale-[0.98]"
+            >
+              <Link href="/auth/login">Log in</Link>
+            </Button>
+          </nav>
+        </header>
+
+        <HeroSection mode={mode} />
+
+        <div className="landing-grid-bg">
           <FeatureGrid mode={mode} />
           <HowItWorks mode={mode} />
           <FooterCTA mode={mode} />
-        </div>
 
-        <footer className="border-t border-slate-900 py-12 text-center text-slate-600 text-sm">
-          © 2024 Prepple AI. Engineered for the future of work.
-        </footer>
+          <footer className="border-t border-white/[0.06] px-6 py-12">
+            <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 text-sm text-slate-500 md:flex-row">
+              <p>© {new Date().getFullYear()} Prepple. Autonomous first-round interviews.</p>
+              <div className="flex gap-6">
+                <Link href="/auth/login" className="transition-colors hover:text-slate-300">
+                  Log in
+                </Link>
+                <Link href="#" className="transition-colors hover:text-slate-300">
+                  Privacy
+                </Link>
+                <Link href="#" className="transition-colors hover:text-slate-300">
+                  Terms
+                </Link>
+              </div>
+            </div>
+          </footer>
+        </div>
       </div>
     </main>
   );
